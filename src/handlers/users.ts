@@ -7,6 +7,7 @@ dotenv.config()
 
 const store = new UserStore()
 
+// Custom Express middleware
 const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const authorizationHeader = req.headers.authorization

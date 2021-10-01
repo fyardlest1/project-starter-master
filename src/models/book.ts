@@ -2,7 +2,7 @@
 import Client from '../database'
 
 export type Book = {
-	id: number
+	id?: number
 	title: string
 	author: string
 	totalPages: number

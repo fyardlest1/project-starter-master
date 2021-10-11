@@ -48,9 +48,11 @@ export class UserStore {
 			const sql =
 				'INSERT INTO users (username, password_digest) VALUES($1, $2) RETURNING *'
 
+			const salt = process.env.SALT_ROUNDS || ''
+			const pepper = process.env.BCRYPT_PASSWORD || ''
 			const hash = bcrypt.hashSync(
 				u.password + pepper,
-				parseInt(saltRounds)
+				parseInt(salt)
 			)
 
 			const result = await conn.query(sql, [u.username, hash])
@@ -74,6 +76,7 @@ export class UserStore {
 
 		const result = await conn.query(sql, [username])
 
+		const pepper = process.env.BCRYPT_PASSWORD || ''
 		console.log(password + pepper)
 
 		if (result.rows.length) {

@@ -10,9 +10,10 @@ const store = new UserStore()
 // Custom Express middleware
 const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const authorizationHeader = req.headers.authorization
+		const authorizationHeader = req.headers.authorization as string
 		const token = authorizationHeader.split(' ')[1]
-		const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
+		const secret = process.env.TOKEN_SECRET
+		const decoded = jwt.verify(token, secret as jwt.Secret)
 
 		next()
 	} catch (error) {
@@ -40,7 +41,8 @@ const create = async (req: Request, res: Response) => {
 	}
 	try {
 		const newUser = await store.create(user)
-		let token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET)
+		const secret = process.env.TOKEN_SECRET
+		let token = jwt.sign({ user: newUser }, secret as jwt.Secret)
 		res.json(token)
 	} catch (err) {
 		res.status(400)
@@ -56,11 +58,12 @@ const authenticate = async (req: Request, res: Response) => {
 	}
 	try {
 		const customer = await store.authenticate(user.username, user.password)
-		let token = jwt.sign({ user: customer }, process.env.TOKEN_SECRET)
+		const secret = process.env.TOKEN_SECRET
+		let token = jwt.sign({ user: customer }, secret as jwt.Secret)
 		res.json(token)
-	} catch (error) {
+	} catch (err) {
 		res.status(401)
-		res.json({ error })
+		res.json({ err })
 	}
 }
 
@@ -71,9 +74,10 @@ const update = async (req: Request, res: Response) => {
 		password: req.body.password,
 	}
 	try {
-		const authorizationHeader = req.headers.authorization
+		const authorizationHeader = req.headers.authorization as string
 		const token = authorizationHeader.split(' ')[1]
-		const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
+		const secret = process.env.TOKEN_SECRET
+		const decoded = jwt.verify(token, secret as jwt.Secret)
 		if (decoded.id !== user.id) {
 			throw new Error('User id does not match!')
 		}
@@ -95,9 +99,10 @@ const update = async (req: Request, res: Response) => {
 // Delete request
 const destroy = async (req: Request, res: Response) => {
 	try {
-		const authorizationHeader = req.headers.authorization
+		const authorizationHeader = req.headers.authorization as string
 		const token = authorizationHeader.split(' ')[1]
-		jwt.verify(token, process.env.TOKEN_SECRET)
+		const secret = process.env.TOKEN_SECRET
+		jwt.verify(token, secret as jwt.Secret)
 	} catch (err) {
 		res.status(401)
 		res.json('Access denied, invalid token')

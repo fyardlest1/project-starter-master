@@ -10,6 +10,7 @@ const client = new Pool({
 	database: POSTGRES_DB,
 	user: POSTGRES_USER,
 	password: POSTGRES_PASSWORD,
+	port: 5432
 })
 
 export default client
